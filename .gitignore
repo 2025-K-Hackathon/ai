@@ -1,6 +1,5 @@
 crawling
 ai_chroma_db
-tts_generator.py
 preprocess.py
 load_data_to_db.py
 
