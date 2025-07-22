@@ -28,14 +28,22 @@ def duplicate_tts(text: str, filename: str) -> bool:
         return False
         
 if __name__ == "__main__":
-    sample_korean_text = "진료 예약하고 싶어요."
-    output_filename = "appointment_request.mp3"
-    
-    print("=" * 30)
-    print(f"변환할 텍스트: '{sample_korean_text}'")
-    print("=" * 30)
-    
-    success = create_korean_tts(text=sample_korean_text, filename=output_filename, output_dir="tts_audio")
-    
-    if duplicate_tts(sample_korean_text, output_filename) and success:
-        print(f"'tts_audio' 폴더 안에 '{output_filename}' 파일 생성 완료")
+    samples = [
+        ("진료 예약하고 싶어요.", "appointment_request.mp3"),
+        ("처음 왔어요.", "first_visit.mp3"),
+        ("신분증 가져왔어요.", "id_card.mp3"),
+        ("오늘 예약 취소했어요.", "cancel_appointment.mp3"),
+        ("오늘 오전 예약 했어요.", "morning_appointment.mp3"),
+        ("오늘 오후 예약 했어요.", "afternoon_appointment.mp3"),
+        ("오늘 예약 변경했어요.", "change_appointment.mp3"),
+        ("오늘 예약 취소했어요.", "cancel_appointment.mp3"),
+        ("얼마나 걸려요?", "how_long.mp3"),
+    ]
+
+    for text, filename in samples:
+        print("=" * 30)
+        print(f"변환할 텍스트: '{text}'")
+        print("=" * 30)
+        success = create_korean_tts(text=text, filename=filename, output_dir="tts_audio")
+        if duplicate_tts(text, filename) and success:
+            print(f"'tts_audio' 폴더 안에 '{filename}' 파일 생성 완료")
