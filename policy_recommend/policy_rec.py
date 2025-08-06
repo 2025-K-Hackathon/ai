@@ -34,6 +34,7 @@ def main():
         "nationality": "베트남",
         "age": get_age(1998),
         "region": "서울",
+        "marriage_status": "기혼",
         "has_child": True,
         "child_age": get_age(2020),
     }

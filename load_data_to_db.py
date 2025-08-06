@@ -22,25 +22,30 @@ def extract_region_with_ai(text_content: str, llm: ChatOpenAI) -> str:
     try:
         response = llm.invoke(prompt)
         region = response.content.strip()
-        if "서울" in region: return "서울"
-        if "부산" in region: return "부산"
-        if "인천" in region: return "인천"
-        if "대전" in region: return "대전"
-        if "대구" in region: return "대구"
-        if "광주" in region: return "광주"
-        if "울산" in region: return "울산"
-        if "세종" in region: return "세종"
-        if "경기" in region: return "경기"
-        if "강원" in region: return "강원"
-        if "충남" in region: return "충남"
-        if "충북" in region: return "충북"
-        if "전남" in region: return "전남"
-        if "전북" in region: return "전북"
-        if "제주" in region: return "제주"
-        # ... (다른 시/도 추가 가능)
-        return region
+        if "서울" in region or "인천" in region or "경기" in region:
+            return "수도권"
+            
+        elif "대전" in region or "세종" in region or "충남" in region or "충북" in region:
+            return "충청도"
+            
+        elif "부산" in region or "대구" in region or "울산" in region or "경북" in region or "경남" in region:
+            return "경상도"
+            
+        elif "광주" in region or "전남" in region or "전북" in region:
+            return "전라도"
+            
+        elif "강원" in region:
+            return "강원도"
+            
+        elif "제주" in region:
+            return "제주도"
+            
+        else:
+            return "전국"
     except Exception:
         return "전국"
+    
+    
 
 def load_and_process_json(file_path: str, llm: ChatOpenAI) -> list:
     with open(file_path, 'r', encoding='utf-8') as f:
@@ -93,10 +98,10 @@ def main():
     
     DB_DIRECTORY = "./policy_chroma_db"
 
-    # # 기존 DB 폴더 삭제 - 새로 만들기 위함
-    # if os.path.exists(DB_DIRECTORY):
-    #     print(f"기존 데이터베이스 폴더 '{DB_DIRECTORY}'를 삭제합니다.")
-    #     shutil.rmtree(DB_DIRECTORY)
+    # 기존 DB 폴더 삭제 - 새로 만들기 위함
+    if os.path.exists(DB_DIRECTORY):
+        print(f"기존 데이터베이스 폴더 '{DB_DIRECTORY}'를 삭제합니다.")
+        shutil.rmtree(DB_DIRECTORY)
 
     documents = load_and_process_json(JSON_FILE_PATH, extraction_llm)
     
