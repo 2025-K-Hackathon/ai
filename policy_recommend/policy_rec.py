@@ -11,6 +11,10 @@ from dotenv import load_dotenv
 def format_docs(docs):
     return "\n\n".join(f"정책 제목: {doc.metadata.get('title', '제목 없음')}\n내용: {doc.page_content}" for doc in docs)
 
+def get_age(birth_year):
+    age = 2025 - birth_year
+    return age
+
 def main():
     load_dotenv()
 
@@ -28,11 +32,10 @@ def main():
     sample_user_profile = {
         "name": "린 응우엔",
         "nationality": "베트남",
-        "age": 27,
+        "age": get_age(1998),
         "region": "서울",
         "has_child": True,
-        "child_age": 5,
-        "interests": ["자녀 교육", "언어 발달", "외국인 친구 만들기"]
+        "child_age": get_age(2020),
     }
     print("1. 테스트 사용자 프로필:")
     print(sample_user_profile)
@@ -57,8 +60,7 @@ def main():
     }
     
     query_text = f"""{sample_user_profile['name']}은 {sample_user_profile['nationality']} 국적의 {sample_user_profile['age']}세 부모입니다.
-    현재 {sample_user_profile['region']}에 거주하며, 만 {sample_user_profile['child_age']}세 자녀를 둔 부모입니다.
-    특히 {', '.join(sample_user_profile['interests'])}에 관심이 많습니다."""
+    현재 {sample_user_profile['region']}에 거주하며, 만 {sample_user_profile['child_age']}세 자녀를 둔 어머니입니다."""
     
     print(f"\n3. 생성된 AI 검색어: \"{query_text}\"")
     print(f"   적용된 DB 필터: {metadata_filter}")
