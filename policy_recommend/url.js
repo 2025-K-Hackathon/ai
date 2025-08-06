@@ -1,5 +1,8 @@
+//        boardSeq, menuSeq
 // 기관소식: 47 7100
 // 타기관소식: 2 282
+
+// 실행시 링크 생성 후 새 창으로 이동
 function get_url(boardSeq=47, menuSeq=7100, conSeq=466575){
     // 1. <form> 엘리먼트를 동적으로 생성합니다.
     const form = document.createElement('form');
@@ -18,7 +21,6 @@ function get_url(boardSeq=47, menuSeq=7100, conSeq=466575){
 
     // 4. formData 객체의 모든 키-값 쌍에 대해 <input> 엘리먼트를 생성하고 form에 추가합니다.
     for (const key in formData) {
-        // 이 객체가 실제로 소유한 속성인지 확인합니다.
         if (Object.prototype.hasOwnProperty.call(formData, key)) {
             const dataInput = document.createElement('input');
             dataInput.setAttribute('type', 'hidden');
@@ -31,9 +33,7 @@ function get_url(boardSeq=47, menuSeq=7100, conSeq=466575){
     // 5. 완성된 <form>을 현재 문서의 <body> 맨 끝에 추가합니다.
     document.body.appendChild(form);
 
-    // 6. Form을 자동으로 제출합니다.
     form.submit();
 
-    // 7. 제출 후, 원래 페이지에 남아있는 <form>을 삭제합니다.
     document.body.removeChild(form);
 }
