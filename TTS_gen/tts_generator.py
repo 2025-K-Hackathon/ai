@@ -3,13 +3,14 @@ from google.cloud import storage
 from google.cloud import texttospeech
 
 BUCKET_NAME = 'dajeong-tts-audio'
-KEY_PATH = './dj-tts-gcp-key.json'
+# KEY_PATH = './dj-tts-gcp-key.json'
+KEY_PATH = 'TTS_gen/dj-tts-gcp-key.json'
 
 storage_client = storage.Client.from_service_account_json(KEY_PATH)
 tts_client = texttospeech.TextToSpeechClient.from_service_account_json(KEY_PATH)
 
 # Google Cloud TTS로 오디오를 생성하여 바로 GCP Cloud Storage에 업로드
-def create_and_upload_tts(text: str, filename: str, bucket_name: str) -> str | None:
+def create_and_upload_tts(text: str, filename: str, bucket_name: str = BUCKET_NAME) -> str | None:
     try:
         bucket = storage_client.bucket(bucket_name)
         blob = bucket.blob(filename)
