@@ -2,6 +2,7 @@ crawling
 ai_chroma_db
 preprocess.py
 check_db.py
+add_url_to_db.py
 
 dj-tts-gcp-key.json
 

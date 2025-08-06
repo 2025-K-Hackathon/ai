@@ -1,19 +1,20 @@
 import os
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
+import json
+from datetime import datetime
+from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
+from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain_community.vectorstores import Chroma
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.runnables import RunnablePassthrough, RunnableParallel
+from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
-from langchain_community.embeddings import SentenceTransformerEmbeddings
-from dotenv import load_dotenv
 
 # 검색된 문서(Document 객체)들을 하나의 깔끔한 문자열로 합치는 함수
 def format_docs(docs):
     return "\n\n".join(f"정책 제목: {doc.metadata.get('title', '제목 없음')}\n내용: {doc.page_content}" for doc in docs)
 
 def get_age(birth_year):
-    age = 2025 - birth_year
-    return age
+    return datetime.now().year - birth_year
 
 def main():
     load_dotenv()
@@ -38,13 +39,20 @@ def main():
         "has_child": True,
         "child_age": get_age(2020),
     }
-    print("1. 테스트 사용자 프로필:")
-    print(sample_user_profile)
+    
+    # 결과를 저장할 딕셔너리
+    result = {
+        "user_profile": sample_user_profile,
+        "ai_recommendation": "",
+        "source_documents": [],
+        "conSeq": None,
+        "timestamp": datetime.now().isoformat()
+    }
 
     DB_DIRECTORY = "./policy_chroma_db"
     if not os.path.exists(DB_DIRECTORY):
-        print(f"오류: '{DB_DIRECTORY}' 데이터베이스 폴더를 찾을 수 없습니다.")
-        return
+        result["error"] = f"오류: '{DB_DIRECTORY}' 데이터베이스 폴더를 찾을 수 없습니다."
+        return result
         
     print("로컬 임베딩 모델을 로드합니다...")
     embeddings = SentenceTransformerEmbeddings(
@@ -122,16 +130,21 @@ def main():
 
     response = rag_chain.invoke(query_text)
     
-    print("\n" + "="*40)
-    print("           AI의 최종 맞춤 정책 추천 결과")
-    print("="*40)
-    print(response["answer"])
-    print("\n" + "="*40)
-    print("              답변 생성에 참고한 원본 문서")
-    print("="*40)
+    # AI 추천 결과 저장
+    result["ai_recommendation"] = response["answer"]
     
+    # 소스 문서 정보 저장
     for doc in response["source_documents"]:
-        print(f"출처: {doc.metadata.get('source')}, 제목: {doc.metadata.get('title')}")
+        doc_info = {
+            "source": doc.metadata.get('source'),
+            "title": doc.metadata.get('title'),
+            "conSeq": doc.metadata.get('conSeq'),
+            "content": doc.page_content[:200] + "..." if len(doc.page_content) > 200 else doc.page_content  # 내용 미리보기
+        }
+        result["source_documents"].append(doc_info)
+    
+    return result
 
 if __name__ == "__main__":
-    main()
+    result = main()
+    print(json.dumps(result, ensure_ascii=False, indent=2))
