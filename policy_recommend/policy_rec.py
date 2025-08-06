@@ -16,7 +16,7 @@ def format_docs(docs):
 def get_age(birth_year):
     return datetime.now().year - birth_year
 
-def main():
+def get_policy_recommendations(user_profile: dict) -> dict:
     load_dotenv()
 
     try:
@@ -25,27 +25,14 @@ def main():
         API_BASE = os.getenv("API_BASE")
         if not API_KEY or not MODEL_ID or not API_BASE:
             raise KeyError
-    except KeyError:
-        print("오류: .env 파일에 API_KEY, MODEL_ID, API_BASE를 설정해야 합니다.")
-        exit()
-
-    # 테스트할 가상 사용자 프로필 정의
-    sample_user_profile = {
-        "name": "린 응우엔",
-        "nationality": "베트남",
-        "age": get_age(1998),
-        "region": "서울",
-        "marriage_status": "기혼",
-        "has_child": True,
-        "child_age": get_age(2020),
-    }
+    except KeyError as e:
+        return {"error": str(e)}
     
     # 결과를 저장할 딕셔너리
     result = {
-        "user_profile": sample_user_profile,
+        "user_profile": user_profile,
         "ai_recommendation": "",
         "source_documents": [],
-        "conSeq": None,
         "timestamp": datetime.now().isoformat()
     }
 
@@ -62,14 +49,22 @@ def main():
     db = Chroma(persist_directory=DB_DIRECTORY, embedding_function=embeddings)
     print("\n2. ChromaDB 로드 완료!")
 
-    search_regions = ["전국", sample_user_profile["region"]]
+    search_regions = ["전국", user_profile["region"]]
     
     metadata_filter = {
         "region": {"$in": search_regions}
     }
     
-    query_text = f"""{sample_user_profile['name']}은 {sample_user_profile['nationality']} 국적의 {sample_user_profile['age']}세 부모입니다.
-    현재 {sample_user_profile['region']}에 거주하며, 만 {sample_user_profile['child_age']}세 자녀를 둔 어머니입니다."""
+    base_query = (
+        f"{user_profile.get('name')}은/는 "
+        f"{user_profile.get('nationality')} 국적의 "
+        f"{get_age(user_profile.get('age'))}세 여성입니다. "
+        f"현재 {user_profile.get('region')}에 거주하고 있습니다."
+    )
+    if user_profile.get('hasChildren') and user_profile.get('childAge') is not None:
+        query_text = base_query + f" 만 {get_age(user_profile.get('childAge'))}세 자녀를 둔 어머니입니다."
+    else:
+        query_text = base_query + " 자녀는 없습니다."
     
     print(f"\n3. 생성된 AI 검색어: \"{query_text}\"")
     print(f"   적용된 DB 필터: {metadata_filter}")
@@ -146,5 +141,15 @@ def main():
     return result
 
 if __name__ == "__main__":
-    result = main()
+    # 테스트할 가상 사용자 프로필 정의
+    sample_user_profile = {
+        "name": "린 응우엔",
+        "nationality": "베트남",
+        "age": 1998,
+        "region": "서울",
+        "married": True,
+        "hasChildren": True,
+        "childAge": 2020,
+    }
+    result = get_policy_recommendations(sample_user_profile)
     print(json.dumps(result, ensure_ascii=False, indent=2))
