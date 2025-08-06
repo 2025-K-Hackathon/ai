@@ -22,7 +22,7 @@ def main():
     extraction_llm = ChatOpenAI(model_name=MODEL_ID, openai_api_key=API_KEY, openai_api_base=API_BASE, temperature=0)
     
     # 추가할 새로운 JSON 파일 경로
-    NEW_JSON_FILE_PATH = "crawling/타기관_notices_2025.json" # <<< 여기에 '새로운' 파일 이름을 입력하세요.
+    NEW_JSON_FILE_PATH = "crawling/타기관_notices_2025.json"
     if not os.path.exists(NEW_JSON_FILE_PATH):
         print(f"오류: 추가할 파일 '{NEW_JSON_FILE_PATH}'을 찾을 수 없습니다.")
         return
