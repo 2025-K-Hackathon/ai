@@ -98,10 +98,10 @@ def main():
     
     DB_DIRECTORY = "./policy_chroma_db"
 
-    # 기존 DB 폴더 삭제 - 새로 만들기 위함
-    if os.path.exists(DB_DIRECTORY):
-        print(f"기존 데이터베이스 폴더 '{DB_DIRECTORY}'를 삭제합니다.")
-        shutil.rmtree(DB_DIRECTORY)
+    # # 기존 DB 폴더 삭제 - 새로 만들기 위함
+    # if os.path.exists(DB_DIRECTORY):
+    #     print(f"기존 데이터베이스 폴더 '{DB_DIRECTORY}'를 삭제합니다.")
+    #     shutil.rmtree(DB_DIRECTORY)
 
     documents = load_and_process_json(JSON_FILE_PATH, extraction_llm)
     

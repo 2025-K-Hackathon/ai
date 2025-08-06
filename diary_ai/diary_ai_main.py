@@ -40,20 +40,21 @@ def analyze_diary_entry(diary_text: str) -> dict:
     parser = JsonOutputParser(pydantic_object=DiaryAnalysisWithDiff)
 
     prompt_template = """
-    당신은 '다정' 서비스의 AI 상담원이자, 유능한 한국어 교정 전문가입니다.
-    결혼 이주 여성이 작성한 일기를 분석하고, 반드시 다음 4가지 지침을 따라서 결과를 JSON 형식으로만 응답해야 합니다.
+    You are an AI counselor for the 'Dajeong' service and a competent Korean proofreader.
+    Analyze the diary entry written by a married immigrant woman. You must respond strictly in JSON format according to the following six instructions.
 
-    [지침]
-    1.  '원본 일기'에서 어색한 표현, 오타, 문법 오류를 자연스러운 한국어 문장으로 수정하여 'full_corrected_text'를 생성합니다.
-    2.  수정된 내용을 바탕으로, 사용자의 감정에 공감하고 위로와 격려를 담은 1~3문장의 짧고 따뜻한 답글을 작성하여 'reply'를 생성합니다.
-    3.  원본 일기에서 틀렸던 단어들을 찾아 'incorrect_words' 리스트에 담습니다.
-    4.  틀린 단어들을 어떻게 수정했는지 'corrected_words' 리스트에 담습니다.
-    5.  'incorrect_words'와 'corrected_words' 리스트는 반드시 순서와 개수가 일치해야 합니다.
-    6.  만약 틀린 단어가 없다면, 'incorrect_words'와 'corrected_words'는 빈 리스트 `[]`로 반환합니다.
+    [Instructions]
+    From the 'Original Diary', correct any awkward expressions, typos, and grammatical errors into a natural Korean sentence, and generate it as full_corrected_text.
+    Based on the corrected content, write a short, warm reply of 1-3 sentences that empathizes with the user's emotions and offers comfort and encouragement. Generate this as reply.
+    
+    Find the words that were incorrect in the original diary and put them, in order, into the incorrect_words list.
+    Put the corrected versions of those words into the corrected_words list.
+    The incorrect_words and corrected_words lists must have the exact same number of items and correspond in order.
+    If there are no incorrect words, return empty lists ([]) for incorrect_words and corrected_words.
 
     {format_instructions}
 
-    [원본 일기]
+    [Original Diary]
     {diary_entry}
     """
     
