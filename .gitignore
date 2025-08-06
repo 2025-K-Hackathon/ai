@@ -1,7 +1,9 @@
 crawling
 ai_chroma_db
 preprocess.py
-load_data_to_db.py
+check_db.py
+
+dj-tts-gcp-key.json
 
 
 .DS_Store
